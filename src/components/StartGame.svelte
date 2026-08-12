@@ -4,6 +4,14 @@
   }
 
   let { onStart }: Props = $props();
+  let playerNamePlaceholders = [
+    'Ada',
+    'Alex',
+    'Casey',
+    'Charlie',
+    'Jordan',
+  ];
+
   let names = $state(['', '']);
   let error = $state('');
 
@@ -52,7 +60,7 @@
                   type="text"
                   autocomplete="off"
                   maxlength="24"
-                  placeholder={index === 0 ? 'e.g. John' : 'Player name'}
+                  placeholder={`e.g. ${playerNamePlaceholders[index]}`}
                   bind:value={names[index]}
                   oninput={() => (error = '')}
                 />
