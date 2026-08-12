@@ -52,7 +52,7 @@
                   type="text"
                   autocomplete="off"
                   maxlength="24"
-                  placeholder={index === 0 ? 'e.g. Morteza' : 'Player name'}
+                  placeholder={index === 0 ? 'e.g. John' : 'Player name'}
                   bind:value={names[index]}
                   oninput={() => (error = '')}
                 />
