@@ -6,10 +6,12 @@
   interface Player {
     id: string;
     name: string;
+    placeholder: string;
   }
 
   let { onStart }: Props = $props();
-  let playerNamePlaceholders = [
+
+  const playerNamePlaceholders = [
     'Ada',
     'Alex',
     'Casey',
@@ -17,14 +19,23 @@
     'Jordan',
   ];
 
+  function createPlayer(placeholder: string): Player {
+    return { id: crypto.randomUUID(), name: '', placeholder };
+  }
+
+  function nextPlaceholder(existing: Player[]): string {
+    const used = new Set(existing.map((player) => player.placeholder));
+    return playerNamePlaceholders.find((placeholder) => !used.has(placeholder)) ?? playerNamePlaceholders[0];
+  }
+
   let players = $state<Player[]>([
-    { id: crypto.randomUUID(), name: '' },
-    { id: crypto.randomUUID(), name: '' },
+    createPlayer(playerNamePlaceholders[0]),
+    createPlayer(playerNamePlaceholders[1]),
   ]);
   let error = $state('');
 
   function addPlayer(): void {
-    if (players.length < 5) players.push({ id: crypto.randomUUID(), name: '' });
+    if (players.length < 5) players.push(createPlayer(nextPlaceholder(players)));
   }
 
   function removePlayer(id: string): void {
@@ -68,7 +79,7 @@
                   type="text"
                   autocomplete="off"
                   maxlength="24"
-                  placeholder={`e.g. ${playerNamePlaceholders[index]}`}
+                  placeholder={`e.g. ${player.placeholder}`}
                   bind:value={player.name}
                   oninput={() => (error = '')}
                 />
