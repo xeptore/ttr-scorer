@@ -16,6 +16,10 @@ pnpm run dev
 pnpm run build
 ```
 
+## Deployment
+
+Pushes to `main` run the checks, build the app, and publish it to GitHub Pages. Pull requests run the checks and production build without publishing.
+
 ## Attribution
 
 This project was solely developed and coded from scratch using the GPT5.6-Sol model.
