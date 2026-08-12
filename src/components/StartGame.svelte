@@ -3,6 +3,11 @@
     onStart: (names: string[]) => void;
   }
 
+  interface Player {
+    id: string;
+    name: string;
+  }
+
   let { onStart }: Props = $props();
   let playerNamePlaceholders = [
     'Ada',
@@ -12,20 +17,23 @@
     'Jordan',
   ];
 
-  let names = $state(['', '']);
+  let players = $state<Player[]>([
+    { id: crypto.randomUUID(), name: '' },
+    { id: crypto.randomUUID(), name: '' },
+  ]);
   let error = $state('');
 
   function addPlayer(): void {
-    if (names.length < 5) names.push('');
+    if (players.length < 5) players.push({ id: crypto.randomUUID(), name: '' });
   }
 
-  function removePlayer(index: number): void {
-    if (names.length > 2) names.splice(index, 1);
+  function removePlayer(id: string): void {
+    if (players.length > 2) players = players.filter((player) => player.id !== id);
   }
 
   function submit(event: SubmitEvent): void {
     event.preventDefault();
-    const cleaned = names.map((name) => name.trim());
+    const cleaned = players.map((player) => player.name.trim());
 
     if (cleaned.some((name) => !name)) {
       error = 'Enter a name for every player.';
@@ -51,25 +59,25 @@
       <fieldset>
         <legend>Players</legend>
         <div class="player-fields">
-          {#each names as name, index}
+          {#each players as player, index (player.id)}
             <div class="player-field">
-              <label for={`player-${index}`}>Player {index + 1}</label>
+              <label for={`player-${player.id}`}>Player {index + 1}</label>
               <div class="input-row">
                 <input
-                  id={`player-${index}`}
+                  id={`player-${player.id}`}
                   type="text"
                   autocomplete="off"
                   maxlength="24"
                   placeholder={`e.g. ${playerNamePlaceholders[index]}`}
-                  bind:value={names[index]}
+                  bind:value={player.name}
                   oninput={() => (error = '')}
                 />
-                {#if names.length > 2}
+                {#if players.length > 2}
                   <button
                     class="icon-button"
                     type="button"
                     aria-label={`Remove player ${index + 1}`}
-                    onclick={() => removePlayer(index)}
+                    onclick={() => removePlayer(player.id)}
                   >×</button>
                 {/if}
               </div>
@@ -78,7 +86,7 @@
         </div>
       </fieldset>
 
-      {#if names.length < 5}
+      {#if players.length < 5}
         <button class="text-button" type="button" onclick={addPlayer}>+ Add player</button>
       {/if}
 
