@@ -2,7 +2,6 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-/** Deploy under this path, e.g. https://games.example.com/ttr/. */
 const configuredBase = process.env.VITE_BASE ?? '/';
 const base =
   configuredBase === '' || configuredBase === '/'
