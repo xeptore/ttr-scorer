@@ -191,6 +191,7 @@ h1, h2 { font-family: Iowan Old Style, Baskerville, Georgia, serif; }
 .route-panel { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .number-control { flex: 0 0 100px; }
 .number-control input { width: 100%; font-size: 1.25rem; font-weight: 700; text-align: center; }
+.station-bonus { display: block; margin-top: .35rem; color: var(--green); text-align: center; font-size: .85rem; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .subtotal { color: var(--green); font-size: 1.25rem; }
 .negative { color: var(--rust) !important; }

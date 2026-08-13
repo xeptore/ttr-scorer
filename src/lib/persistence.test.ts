@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createGame } from './game';
+import { createGame, GAME_SCHEMA_VERSION, STARTING_TRAIN_STATIONS } from './game';
 import { GAME_STORAGE_KEY, loadGame, saveGame } from './persistence';
 
 class MemoryStorage implements Storage {
@@ -48,5 +48,20 @@ describe('game persistence', () => {
 
     storage.setItem(GAME_STORAGE_KEY, '{not json');
     expect(loadGame(storage)).toBeNull();
+  });
+
+  it('migrates saved games created before train stations were scored', () => {
+    const storage = new MemoryStorage();
+    const game = createGame(['Ada', 'Grace']);
+    const legacyGame = {
+      ...game,
+      schemaVersion: 1,
+      players: game.players.map(({ remainingTrainStations: _, ...player }) => player)
+    };
+    storage.setItem(GAME_STORAGE_KEY, JSON.stringify(legacyGame));
+
+    const loaded = loadGame(storage);
+    expect(loaded?.schemaVersion).toBe(GAME_SCHEMA_VERSION);
+    expect(loaded?.players.every((player) => player.remainingTrainStations === STARTING_TRAIN_STATIONS)).toBe(true);
   });
 });

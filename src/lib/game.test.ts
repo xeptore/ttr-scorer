@@ -17,9 +17,19 @@ describe('scorePlayer', () => {
     expect(scorePlayer(game, player)).toEqual({
       route: 42,
       tickets: -4,
+      trainStations: 12,
       longestPath: 0,
-      total: 38
+      total: 50
     });
+  });
+
+  it('awards four points for each remaining train station', () => {
+    const game = createGame(['Ada', 'Grace']);
+    const player = game.players[0];
+    player.remainingTrainStations = 1;
+
+    expect(scorePlayer(game, player).trainStations).toBe(4);
+    expect(scorePlayer(game, player).total).toBe(4);
   });
 
   it('awards the longest path bonus to every selected player', () => {

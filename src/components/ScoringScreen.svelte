@@ -3,6 +3,8 @@
     createTicket,
     isGameComplete,
     scorePlayer,
+    STARTING_TRAIN_STATIONS,
+    TRAIN_STATION_BONUS,
     touchGame,
     type Game,
     type Player,
@@ -35,6 +37,14 @@
 
   function updateRouteScore(value: string): void {
     activePlayer.routeScore = Math.max(0, Math.trunc(Number(value) || 0));
+    changed();
+  }
+
+  function updateRemainingTrainStations(value: string): void {
+    activePlayer.remainingTrainStations = Math.min(
+      STARTING_TRAIN_STATIONS,
+      Math.max(0, Math.trunc(Number(value) || 0))
+    );
     changed();
   }
 
@@ -128,6 +138,26 @@
           value={activePlayer.routeScore}
           oninput={(event) => updateRouteScore(event.currentTarget.value)}
         />
+      </label>
+    </section>
+
+    <section class="panel route-panel" aria-labelledby="stations-heading">
+      <div>
+        <h3 id="stations-heading">Train Stations</h3>
+        <p>Each remaining station is worth +{TRAIN_STATION_BONUS} points.</p>
+      </div>
+      <label class="number-control">
+        <span>Remaining</span>
+        <input
+          type="number"
+          min="0"
+          max={STARTING_TRAIN_STATIONS}
+          step="1"
+          inputmode="numeric"
+          value={activePlayer.remainingTrainStations}
+          oninput={(event) => updateRemainingTrainStations(event.currentTarget.value)}
+        />
+        <strong class="station-bonus">+{activeScore.trainStations}</strong>
       </label>
     </section>
 

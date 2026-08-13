@@ -1,5 +1,7 @@
-export const GAME_SCHEMA_VERSION = 1 as const;
+export const GAME_SCHEMA_VERSION = 2 as const;
 export const LONGEST_PATH_BONUS = 10;
+export const TRAIN_STATION_BONUS = 4;
+export const STARTING_TRAIN_STATIONS = 3;
 
 export type TicketStatus = 'completed' | 'failed';
 
@@ -13,6 +15,7 @@ export interface Player {
   id: string;
   name: string;
   routeScore: number;
+  remainingTrainStations: number;
   tickets: DestinationTicket[];
   scoringComplete: boolean;
 }
@@ -30,6 +33,7 @@ export interface Game {
 export interface PlayerScore {
   route: number;
   tickets: number;
+  trainStations: number;
   longestPath: number;
   total: number;
 }
@@ -54,6 +58,7 @@ export function createGame(names: string[], now = new Date()): Game {
     id: makeId(),
     name,
     routeScore: 0,
+    remainingTrainStations: STARTING_TRAIN_STATIONS,
     tickets: [],
     scoringComplete: false
   }));
@@ -79,13 +84,15 @@ export function scorePlayer(game: Game, player: Player): PlayerScore {
     (sum, ticket) => sum + (ticket.status === 'completed' ? ticket.points : -ticket.points),
     0
   );
+  const trainStations = player.remainingTrainStations * TRAIN_STATION_BONUS;
   const longestPath = game.longestPathPlayerIds.includes(player.id) ? LONGEST_PATH_BONUS : 0;
 
   return {
     route: player.routeScore,
     tickets,
+    trainStations,
     longestPath,
-    total: player.routeScore + tickets + longestPath
+    total: player.routeScore + tickets + trainStations + longestPath
   };
 }
 
