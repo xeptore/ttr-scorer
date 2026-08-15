@@ -4,8 +4,8 @@ An offline-first Progressive Web App for scoring Ticket to Ride: Europe games.
 
 ## Features
 
-- Score 2–5 players, routes, destination tickets, and tied Longest Path bonuses.
-- Autosave games locally and resume them offline after the first visit.
+- Score routes, destination tickets, remaining Train Stations, and tied Longest Path bonuses.
+- Autosave locally and restore compatible saved-game schemas.
 - Installable PWA with user-controlled updates.
 
 ## Development
@@ -13,19 +13,30 @@ An offline-first Progressive Web App for scoring Ticket to Ride: Europe games.
 ```sh
 pnpm install
 pnpm run dev
+pnpm run check
+pnpm run test:coverage
+pnpm run format:check
+pnpm run icons:check
 pnpm run build
 ```
 
+Set `VITE_BASE` when validating a subpath deployment, for example
+`VITE_BASE=/ttr-scorer/ pnpm run build`.
+
+## Architecture
+
+- `src/lib/domain`: pure game types and scoring rules.
+- `src/lib/components`: reusable Svelte UI components.
+- `src/lib/persistence.ts`: versioned, validated device-local storage.
+- `src/lib/pwa.ts`: service-worker lifecycle registration.
+- `src/App.svelte`: application orchestration and screen composition.
+
 ## Deployment
 
-Pushes to `main` run the checks, build the app, and publish it to GitHub Pages. Pull requests run the checks and production build without publishing.
-
-## Attribution
-
-This project was solely developed and coded from scratch using the GPT5.6-Sol model.
-
-Ticket to Ride is a trademark of Days of Wonder. This is an unofficial, non-affiliated fan project.
+Pushes to `main` run formatting, icon, type, coverage, and production-build checks before
+publishing to GitHub Pages.
 
 ## License
 
-MIT. Add GitHub's standard MIT `LICENSE` file before publishing, using the copyright holder name you want to appear publicly.
+MIT. Ticket to Ride is a trademark of Days of Wonder. This is an unofficial, non-affiliated
+fan project.

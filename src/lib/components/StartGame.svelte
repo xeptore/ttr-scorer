@@ -1,70 +1,72 @@
 <script lang="ts">
   interface Props {
-    onStart: (names: string[]) => void;
+    onStart: (names: string[]) => void
   }
 
   interface Player {
-    id: string;
-    name: string;
-    placeholder: string;
+    id: string
+    name: string
+    placeholder: string
   }
 
-  let { onStart }: Props = $props();
+  let { onStart }: Props = $props()
 
-  const playerNamePlaceholders = [
-    'Ada',
-    'Alex',
-    'Casey',
-    'Charlie',
-    'Jordan',
-  ];
+  const playerNamePlaceholders = ['Ada', 'Alex', 'Casey', 'Charlie', 'Jordan']
 
   function createPlayer(placeholder: string): Player {
-    return { id: crypto.randomUUID(), name: '', placeholder };
+    return { id: crypto.randomUUID(), name: '', placeholder }
   }
 
   function nextPlaceholder(existing: Player[]): string {
-    const used = new Set(existing.map((player) => player.placeholder));
-    return playerNamePlaceholders.find((placeholder) => !used.has(placeholder)) ?? playerNamePlaceholders[0];
+    const used = new Set(existing.map((player) => player.placeholder))
+    return (
+      playerNamePlaceholders.find((placeholder) => !used.has(placeholder)) ??
+      playerNamePlaceholders[0]
+    )
   }
 
   let players = $state<Player[]>([
     createPlayer(playerNamePlaceholders[0]),
     createPlayer(playerNamePlaceholders[1]),
-  ]);
-  let error = $state('');
+  ])
+  let error = $state('')
 
   function addPlayer(): void {
-    if (players.length < 5) players.push(createPlayer(nextPlaceholder(players)));
+    if (players.length < 5) players.push(createPlayer(nextPlaceholder(players)))
   }
 
   function removePlayer(id: string): void {
-    if (players.length > 2) players = players.filter((player) => player.id !== id);
+    if (players.length > 2) players = players.filter((player) => player.id !== id)
   }
 
   function submit(event: SubmitEvent): void {
-    event.preventDefault();
-    const cleaned = players.map((player) => player.name.trim());
+    event.preventDefault()
+    const cleaned = players.map((player) => player.name.trim())
 
     if (cleaned.some((name) => !name)) {
-      error = 'Enter a name for every player.';
-      return;
+      error = 'Enter a name for every player.'
+      return
     }
     if (new Set(cleaned.map((name) => name.toLocaleLowerCase())).size !== cleaned.length) {
-      error = 'Use a different name for each player.';
-      return;
+      error = 'Use a different name for each player.'
+      return
     }
 
-    error = '';
-    onStart(cleaned);
+    error = ''
+    onStart(cleaned)
   }
 </script>
 
 <main class="start-shell">
-  <section class="start-card" aria-labelledby="start-title">
+  <section
+    class="start-card"
+    aria-labelledby="start-title"
+  >
     <div class="eyebrow">Offline scorekeeper</div>
     <h1 id="start-title">Ticket to Ride: Europe</h1>
-    <p class="intro">Add the travelers around the table. You can score routes and tickets after the game.</p>
+    <p class="intro">
+      Add the travelers around the table. You can score routes and tickets after the game.
+    </p>
 
     <form onsubmit={submit}>
       <fieldset>
@@ -89,7 +91,9 @@
                     type="button"
                     aria-label={`Remove player ${index + 1}`}
                     onclick={() => removePlayer(player.id)}
-                  >×</button>
+                  >
+                    ×
+                  </button>
                 {/if}
               </div>
             </div>
@@ -98,12 +102,28 @@
       </fieldset>
 
       {#if players.length < 5}
-        <button class="text-button" type="button" onclick={addPlayer}>+ Add player</button>
+        <button
+          class="text-button"
+          type="button"
+          onclick={addPlayer}
+        >
+          + Add player
+        </button>
       {/if}
 
-      {#if error}<p class="form-error" role="alert">{error}</p>{/if}
+      {#if error}<p
+          class="form-error"
+          role="alert"
+        >
+          {error}
+        </p>{/if}
 
-      <button class="primary-button start-button" type="submit">Start scoring</button>
+      <button
+        class="primary-button start-button"
+        type="submit"
+      >
+        Start scoring
+      </button>
     </form>
 
     <p class="offline-note">Your game stays on this device and is saved as you score.</p>

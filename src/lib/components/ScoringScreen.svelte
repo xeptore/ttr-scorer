@@ -8,95 +8,107 @@
     touchGame,
     type Game,
     type Player,
-    type TicketStatus
-  } from '../lib/game';
+    type TicketStatus,
+  } from '../domain/game'
 
   interface Props {
-    game: Game;
-    onNewGame: () => void;
+    game: Game
+    onNewGame: () => void
   }
 
-  let { game = $bindable(), onNewGame }: Props = $props();
-  let trayExpanded = $state(true);
-  let longestPathExpanded = $state(false);
+  let { game = $bindable(), onNewGame }: Props = $props()
+  let trayExpanded = $state(true)
+  let longestPathExpanded = $state(false)
 
   let activePlayer = $derived(
-    game.players.find((player) => player.id === game.activePlayerId) ?? game.players[0]
-  );
-  let activeScore = $derived(scorePlayer(game, activePlayer));
-  let completedCount = $derived(game.players.filter((player) => player.scoringComplete).length);
+    game.players.find((player) => player.id === game.activePlayerId) ?? game.players[0],
+  )
+  let activeScore = $derived(scorePlayer(game, activePlayer))
+  let completedCount = $derived(game.players.filter((player) => player.scoringComplete).length)
 
   function changed(): void {
-    touchGame(game);
+    touchGame(game)
   }
 
   function selectPlayer(player: Player): void {
-    game.activePlayerId = player.id;
-    changed();
+    game.activePlayerId = player.id
+    changed()
   }
 
   function updateRouteScore(value: string): void {
-    activePlayer.routeScore = Math.max(0, Math.trunc(Number(value) || 0));
-    changed();
+    activePlayer.routeScore = Math.max(0, Math.trunc(Number(value) || 0))
+    changed()
   }
 
   function updateRemainingTrainStations(value: string): void {
     activePlayer.remainingTrainStations = Math.min(
       STARTING_TRAIN_STATIONS,
-      Math.max(0, Math.trunc(Number(value) || 0))
-    );
-    changed();
+      Math.max(0, Math.trunc(Number(value) || 0)),
+    )
+    changed()
   }
 
   function addTicket(): void {
-    activePlayer.tickets.push(createTicket());
-    changed();
+    activePlayer.tickets.push(createTicket())
+    changed()
   }
 
   function updateTicketPoints(ticketId: string, value: string): void {
-    const ticket = activePlayer.tickets.find((candidate) => candidate.id === ticketId);
-    if (!ticket) return;
-    ticket.points = Math.max(0, Math.trunc(Number(value) || 0));
-    changed();
+    const ticket = activePlayer.tickets.find((candidate) => candidate.id === ticketId)
+    if (!ticket) return
+    ticket.points = Math.max(0, Math.trunc(Number(value) || 0))
+    changed()
   }
 
   function setTicketStatus(ticketId: string, status: TicketStatus): void {
-    const ticket = activePlayer.tickets.find((candidate) => candidate.id === ticketId);
-    if (!ticket) return;
-    ticket.status = status;
-    changed();
+    const ticket = activePlayer.tickets.find((candidate) => candidate.id === ticketId)
+    if (!ticket) return
+    ticket.status = status
+    changed()
   }
 
   function removeTicket(ticketId: string): void {
-    activePlayer.tickets = activePlayer.tickets.filter((ticket) => ticket.id !== ticketId);
-    changed();
+    activePlayer.tickets = activePlayer.tickets.filter((ticket) => ticket.id !== ticketId)
+    changed()
   }
 
   function toggleLongestPath(playerId: string): void {
     if (game.longestPathPlayerIds.includes(playerId)) {
-      game.longestPathPlayerIds = game.longestPathPlayerIds.filter((id) => id !== playerId);
+      game.longestPathPlayerIds = game.longestPathPlayerIds.filter((id) => id !== playerId)
     } else {
-      game.longestPathPlayerIds.push(playerId);
+      game.longestPathPlayerIds.push(playerId)
     }
-    changed();
+    changed()
   }
 
   function toggleComplete(): void {
-    activePlayer.scoringComplete = !activePlayer.scoringComplete;
-    changed();
+    activePlayer.scoringComplete = !activePlayer.scoringComplete
+    changed()
   }
 </script>
 
-<div class="app-shell" class:tray-collapsed={!trayExpanded}>
+<div
+  class="app-shell"
+  class:tray-collapsed={!trayExpanded}
+>
   <header class="app-header">
     <div>
       <div class="eyebrow">Ticket to Ride: Europe</div>
       <h1>Score the journey</h1>
     </div>
-    <button class="secondary-button compact" type="button" onclick={onNewGame}>New game</button>
+    <button
+      class="secondary-button compact"
+      type="button"
+      onclick={onNewGame}
+    >
+      New game
+    </button>
   </header>
 
-  <nav class="player-tabs" aria-label="Players">
+  <nav
+    class="player-tabs"
+    aria-label="Players"
+  >
     {#each game.players as player}
       <button
         type="button"
@@ -106,13 +118,21 @@
       >
         <span>{player.name}</span>
         <strong>{scorePlayer(game, player).total}</strong>
-        {#if player.scoringComplete}<span class="done-dot" aria-label="Scoring complete">✓</span>{/if}
+        {#if player.scoringComplete}<span
+            class="done-dot"
+            aria-label="Scoring complete"
+          >
+            ✓
+          </span>{/if}
       </button>
     {/each}
   </nav>
 
   <main class="scoring-main">
-    <section class="score-hero" aria-live="polite">
+    <section
+      class="score-hero"
+      aria-live="polite"
+    >
       <div>
         <p>Scoring for</p>
         <h2>{activePlayer.name}</h2>
@@ -123,7 +143,10 @@
       </div>
     </section>
 
-    <section class="panel route-panel" aria-labelledby="route-heading">
+    <section
+      class="panel route-panel"
+      aria-labelledby="route-heading"
+    >
       <div>
         <h3 id="route-heading">Board routes</h3>
         <p>Enter the route score already shown on the board.</p>
@@ -141,7 +164,10 @@
       </label>
     </section>
 
-    <section class="panel route-panel" aria-labelledby="stations-heading">
+    <section
+      class="panel route-panel"
+      aria-labelledby="stations-heading"
+    >
       <div>
         <h3 id="stations-heading">Train Stations</h3>
         <p>Each remaining station is worth +{TRAIN_STATION_BONUS} points.</p>
@@ -161,13 +187,19 @@
       </label>
     </section>
 
-    <section class="panel ticket-panel" aria-labelledby="tickets-heading">
+    <section
+      class="panel ticket-panel"
+      aria-labelledby="tickets-heading"
+    >
       <div class="section-heading">
         <div>
           <h3 id="tickets-heading">Destination tickets</h3>
           <p>Add all tickets now, including failed ones.</p>
         </div>
-        <span class:negative={activeScore.tickets < 0} class="subtotal">
+        <span
+          class:negative={activeScore.tickets < 0}
+          class="subtotal"
+        >
           {activeScore.tickets > 0 ? '+' : ''}{activeScore.tickets}
         </span>
       </div>
@@ -189,20 +221,30 @@
                   oninput={(event) => updateTicketPoints(ticket.id, event.currentTarget.value)}
                 />
               </label>
-              <div class="status-toggle" aria-label={`Ticket ${index + 1} status`}>
+              <div
+                class="status-toggle"
+                aria-label={`Ticket ${index + 1} status`}
+              >
                 <button
                   type="button"
                   class:active={ticket.status === 'completed'}
                   onclick={() => setTicketStatus(ticket.id, 'completed')}
-                >Completed</button>
+                >
+                  Completed
+                </button>
                 <button
                   type="button"
                   class:active={ticket.status === 'failed'}
                   class:failed={ticket.status === 'failed'}
                   onclick={() => setTicketStatus(ticket.id, 'failed')}
-                >Failed</button>
+                >
+                  Failed
+                </button>
               </div>
-              <strong class:negative={ticket.status === 'failed'} class="ticket-value">
+              <strong
+                class:negative={ticket.status === 'failed'}
+                class="ticket-value"
+              >
                 {ticket.status === 'failed' ? '−' : '+'}{ticket.points}
               </strong>
               <button
@@ -210,13 +252,21 @@
                 type="button"
                 aria-label={`Remove ticket ${index + 1}`}
                 onclick={() => removeTicket(ticket.id)}
-              >×</button>
+              >
+                ×
+              </button>
             </div>
           {/each}
         </div>
       {/if}
 
-      <button class="secondary-button add-ticket" type="button" onclick={addTicket}>+ Add ticket</button>
+      <button
+        class="secondary-button add-ticket"
+        type="button"
+        onclick={addTicket}
+      >
+        + Add ticket
+      </button>
     </section>
 
     <section class="panel longest-panel">
@@ -231,7 +281,9 @@
           <small>Global bonus · ties allowed</small>
         </span>
         <span class="bonus-summary">
-          {game.longestPathPlayerIds.length === 0 ? 'None' : `${game.longestPathPlayerIds.length} selected`}
+          {game.longestPathPlayerIds.length === 0
+            ? 'None'
+            : `${game.longestPathPlayerIds.length} selected`}
           <span aria-hidden="true">{longestPathExpanded ? '⌃' : '⌄'}</span>
         </span>
       </button>
@@ -254,46 +306,77 @@
       {/if}
     </section>
 
-    <section class="completion-panel" class:complete={activePlayer.scoringComplete}>
+    <section
+      class="completion-panel"
+      class:complete={activePlayer.scoringComplete}
+    >
       <div>
-        <h3>{activePlayer.scoringComplete ? `${activePlayer.name} is done` : `Finished with ${activePlayer.name}?`}</h3>
+        <h3>
+          {activePlayer.scoringComplete
+            ? `${activePlayer.name} is done`
+            : `Finished with ${activePlayer.name}?`}
+        </h3>
         <p>This is separate from the Longest Path bonus.</p>
       </div>
       <button
         type="button"
         class={activePlayer.scoringComplete ? 'secondary-button' : 'primary-button'}
         onclick={toggleComplete}
-      >{activePlayer.scoringComplete ? 'Mark incomplete' : 'Mark scoring complete'}</button>
+      >
+        {activePlayer.scoringComplete ? 'Mark incomplete' : 'Mark scoring complete'}
+      </button>
     </section>
 
     {#if isGameComplete(game)}
-      <section class="all-complete" aria-live="polite">
+      <section
+        class="all-complete"
+        aria-live="polite"
+      >
         <strong>Scoring complete</strong>
         <span>All players have been checked. Highest total wins!</span>
       </section>
     {/if}
   </main>
 
-  <aside class="score-tray" aria-label="Current scores">
+  <aside
+    class="score-tray"
+    aria-label="Current scores"
+  >
     <button
       class="tray-handle"
       type="button"
       aria-expanded={trayExpanded}
       onclick={() => (trayExpanded = !trayExpanded)}
     >
-      <span>Scores <small>{completedCount}/{game.players.length} complete</small></span>
+      <span>
+        Scores <small>{completedCount}/{game.players.length} complete</small>
+      </span>
       <span aria-hidden="true">{trayExpanded ? '⌄' : '⌃'}</span>
     </button>
     {#if trayExpanded}
       <div class="tray-scores">
         {#each [...game.players].sort((a, b) => scorePlayer(game, b).total - scorePlayer(game, a).total) as player}
-          <button type="button" onclick={() => selectPlayer(player)} class:active={player.id === activePlayer.id}>
+          <button
+            type="button"
+            onclick={() => selectPlayer(player)}
+            class:active={player.id === activePlayer.id}
+          >
             <span class="tray-name">
               {player.name}
               {#if game.longestPathPlayerIds.includes(player.id)}
-                <span class="path-badge" title="Longest Continuous Path">LP</span>
+                <span
+                  class="path-badge"
+                  title="Longest Continuous Path"
+                >
+                  LP
+                </span>
               {/if}
-              {#if player.scoringComplete}<span class="complete-badge" title="Scoring complete">✓</span>{/if}
+              {#if player.scoringComplete}<span
+                  class="complete-badge"
+                  title="Scoring complete"
+                >
+                  ✓
+                </span>{/if}
             </span>
             <strong>{scorePlayer(game, player).total}</strong>
           </button>
